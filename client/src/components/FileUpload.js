@@ -11,6 +11,8 @@ const FileUpload = () => {
   const [uploadedFile, setUploadedFile] = useState({});
   const [message, setMessage] = useState('');
   const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [croppedFiles, setCroppedFiles] = useState([]);
+  const crops = [];
   const _URL = window.URL || window.webkitURL;
 
   const onChange = (e) => {
@@ -18,6 +20,21 @@ const FileUpload = () => {
     setFilename(e.target.files[0].name);
   };
 
+  const dataURIToBlob = (dataURI) => {
+    // convert base64 to raw binary data held in a string
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // write the bytes of the string to an ArrayBuffer
+    var arrayBuffer = new ArrayBuffer(byteString.length);
+    var _ia = new Uint8Array(arrayBuffer);
+    for (var i = 0; i < byteString.length; i++) {
+      _ia[i] = byteString.charCodeAt(i);
+    }
+
+    var dataView = new DataView(arrayBuffer);
+    var blob = new Blob([dataView], { type: 'image/jpeg' });
+    return blob;
+  };
   const imageSizeSatisfied = (file) => {
     var img;
     img = new Image();
@@ -106,6 +123,15 @@ const FileUpload = () => {
       document.body.appendChild(outputImage2);
       document.body.appendChild(outputImage3);
       document.body.appendChild(outputImage4);
+
+      crops.push(dataURIToBlob(outputImage1.toDataURL()));
+
+      crops.push(dataURIToBlob(outputImage2.toDataURL()));
+
+      crops.push(dataURIToBlob(outputImage3.toDataURL()));
+
+      crops.push(dataURIToBlob(outputImage4.toDataURL()));
+      setCroppedFiles([...crops]);
     };
 
     // start loading our image
@@ -150,9 +176,13 @@ const FileUpload = () => {
       setMessageType('warning');
       return setMessage('Image size must be 1024 * 1024');
     }
-    const formData = new FormData();
-    formData.append('file', file);
-    sendFormDataToServer(formData);
+    console.log(croppedFiles.length);
+    let formData = new FormData();
+    for (let i = 0; i < croppedFiles.length; ++i) {
+      formData = new FormData();
+      formData.append('file', croppedFiles[i]);
+      sendFormDataToServer(formData);
+    }
   };
 
   if (file && !cropDone) {
@@ -187,7 +217,11 @@ const FileUpload = () => {
         <div className='row mt-5'>
           <div className='col-md-6 m-auto'>
             <h3 className='text-center'>{uploadedFile.fileName}</h3>
-            <img style={{ width: '100%' }} src={uploadedFile.filePath} alt='' />
+            <img
+              style={{ width: '100%' }}
+              src={`${uploadedFile.filePath}.jpg`}
+              alt=''
+            />
           </div>
         </div>
       )}

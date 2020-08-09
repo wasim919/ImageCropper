@@ -1,9 +1,12 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
+const cors = require('cors');
 
 const app = express();
 
 app.use(fileUpload());
+
+app.use(cors());
 
 // Upload Endpoint
 app.post('/upload', (req, res) => {
@@ -13,7 +16,7 @@ app.post('/upload', (req, res) => {
 
   const file = req.files.file;
   const filename = `${Date.now()}_${file.name}`;
-  file.mv(`${__dirname}/client/public/uploads/${filename}`, (err) => {
+  file.mv(`${__dirname}/client/public/uploads/${filename}.jpg`, (err) => {
     if (err) {
       console.error(err);
       return res.status(500).send(err);
