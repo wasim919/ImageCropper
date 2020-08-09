@@ -8,7 +8,6 @@ const FileUpload = () => {
   const [cropDone, setCropDone] = useState(false);
   const [messageType, setMessageType] = useState('info');
   const [filename, setFilename] = useState('Choose File');
-  const [uploadedFile, setUploadedFile] = useState({});
   const [message, setMessage] = useState('');
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [croppedFiles, setCroppedFiles] = useState([]);
@@ -141,7 +140,7 @@ const FileUpload = () => {
 
   const sendFormDataToServer = async (formData) => {
     try {
-      const res = await axios.post('/upload', formData, {
+      await axios.post('/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -156,9 +155,6 @@ const FileUpload = () => {
           setTimeout(() => setUploadPercentage(0), 10000);
         },
       });
-      const { fileName, filePath } = res.data;
-
-      setUploadedFile({ fileName, filePath });
 
       setMessage('File Uploaded');
     } catch (err) {
@@ -176,7 +172,6 @@ const FileUpload = () => {
       setMessageType('warning');
       return setMessage('Image size must be 1024 * 1024');
     }
-    console.log(croppedFiles.length);
     let formData = new FormData();
     for (let i = 0; i < croppedFiles.length; ++i) {
       formData = new FormData();
@@ -212,19 +207,8 @@ const FileUpload = () => {
           value='Upload'
           className='btn btn-primary btn-block mt-4'
         />
+        {'\n'}
       </form>
-      {uploadedFile && (
-        <div className='row mt-5'>
-          <div className='col-md-6 m-auto'>
-            <h3 className='text-center'>{uploadedFile.fileName}</h3>
-            <img
-              style={{ width: '100%' }}
-              src={`${uploadedFile.filePath}.jpg`}
-              alt=''
-            />
-          </div>
-        </div>
-      )}
     </Fragment>
   );
 };
