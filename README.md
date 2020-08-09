@@ -1,4 +1,4 @@
-# React File Upload
+# Image Cropper
 
 > This is a full stack React-Express file cropper
 ## Quick Start
