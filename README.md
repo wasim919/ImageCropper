@@ -1,6 +1,6 @@
 # Image Cropper
 
-> This is a full stack React-Express file cropper
+> This is a full stack React-Express image cropper
 ## Quick Start
 
 ```bash
